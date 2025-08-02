@@ -8,3 +8,4 @@ venv/
 attachment_uploader.log
 test_imports.py
 gmail_to_drive_1.py
+test_script.py

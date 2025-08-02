@@ -38,23 +38,23 @@ logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
 # ====== GOOGLE AUTH ======
 def authenticate_google_drive():
     """
-    Authenticate with Google Drive and return a service client.
-    Uses OAuth2 with token persistence.
+    Authenticate with Google Drive using refreshable OAuth2 credentials 
+    (suitable for non-interactive environments like GitHub Actions).
     """
     try:
-        creds = None
-        if os.path.exists('token.json'):
-            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
-                creds = flow.run_local_server(port=0)
-            with open('token.json', 'w') as token_file:
-                token_file.write(creds.to_json())
+        creds = Credentials.from_authorized_user_info({
+            "client_id": os.environ["GOOGLE_CLIENT_ID"],
+            "client_secret": os.environ["GOOGLE_CLIENT_SECRET"],
+            "refresh_token": os.environ["GOOGLE_REFRESH_TOKEN"],
+            "token_uri": "https://oauth2.googleapis.com/token"
+        })
+
+        if not creds.valid:
+            creds.refresh(Request())
+
         logging.info("Authenticated with Google Drive.")
         return build('drive', 'v3', credentials=creds)
+
     except Exception as e:
         logging.error("Google Drive authentication failed: %s", e)
         raise
