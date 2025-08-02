@@ -1,12 +1,12 @@
 ---
 
-## 📤 Gmail to Google Drive Uploader
+## Gmail to Google Drive Uploader
 
 This Python script connects to a Gmail inbox, downloads attachments from specific emails, and uploads them to a designated folder in Google Drive — skipping duplicates by filename.
 
 ---
 
-### 📁 Project Structure
+### Project Structure
 
 ```
 gmail_drive_uploader/
@@ -20,7 +20,7 @@ gmail_drive_uploader/
 
 ---
 
-### ✅ Features
+### Features
 
 * Downloads attachments (CSV/XLSX) from Gmail based on filters.
 * Uploads to a specific folder in Google Drive.
@@ -29,7 +29,7 @@ gmail_drive_uploader/
 
 ---
 
-### ⚙️ Prerequisites
+### Prerequisites
 
 #### 1. Python 3.7+
 
@@ -37,7 +37,7 @@ Install Python from [https://www.python.org/downloads/](https://www.python.org/d
 
 ---
 
-### 📦 Installation Steps
+### Installation Steps
 
 #### Step 1: Clone or Download the Project
 
@@ -68,7 +68,7 @@ pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib i
 
 ---
 
-### 🔐 Gmail Setup
+### Gmail Setup
 
 #### Step 1: Enable IMAP in Gmail
 
@@ -87,7 +87,7 @@ Use this in `.env` as your `EMAIL_PASSWORD`.
 
 ---
 
-### ☁️ Google Drive API Setup
+### Google Drive API Setup
 
 #### Step 1: Create a Google Cloud Project
 
@@ -110,7 +110,7 @@ Use this in `.env` as your `EMAIL_PASSWORD`.
 
 ---
 
-### 📄 .env File Setup
+### .env File Setup
 
 Create a `.env` file in the root directory:
 
@@ -129,7 +129,7 @@ To get the `GDRIVE_FOLDER_ID`:
 
 ---
 
-### 🚀 How to Run the Script
+### How to Run the Script
 
 ```bash
 python gmail_to_drive.py
@@ -137,7 +137,7 @@ python gmail_to_drive.py
 
 ---
 
-### 📌 Notes
+### Notes
 
 * The script uses OAuth for Google Drive access. The `token.json` will be reused unless deleted.
 * Files with the same name in the target Drive folder will **not be uploaded again**.
@@ -145,7 +145,7 @@ python gmail_to_drive.py
 
 ---
 
-### 🛠 Optional: Create `requirements.txt`
+### Optional: Create `requirements.txt`
 
 To regenerate your requirements file:
 
@@ -155,7 +155,7 @@ pip freeze > requirements.txt
 
 ---
 
-### 🧼 Troubleshooting
+### Troubleshooting
 
 * **Could not locate runnable browser**: Use `run_local_server()` instead of `run_console()`.
 * **App password not working**: Ensure 2FA is enabled and you use the generated 16-char password.
@@ -163,7 +163,7 @@ pip freeze > requirements.txt
 
 ---
 
-### 📚 Credits
+### Credits
 
 * Uses: `google-api-python-client`, `google-auth`, `imaplib2`, `dotenv`
 * Inspired by real-world automation needs.
