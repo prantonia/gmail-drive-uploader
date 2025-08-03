@@ -20,10 +20,7 @@ EMAIL_PASS = os.getenv("EMAIL_PASS")
 SENDER_FILTER = os.getenv("SENDER_FILTER")
 GDRIVE_FOLDER_ID = os.getenv("GDRIVE_FOLDER_ID")
 
-SCOPES = [
-    'https://www.googleapis.com/auth/gmail.readonly',
-    'https://www.googleapis.com/auth/drive.file'
-]
+SCOPES = ['https://www.googleapis.com/auth/drive.file']
 
 
 # LOGGING SETUP
@@ -42,19 +39,36 @@ logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
 # GOOGLE AUTHENTICATION
 def authenticate_google_drive():
     """
-    Authenticate with Google Drive using refreshable OAuth2 credentials 
-    (suitable for non-interactive environments like GitHub Actions).
+    Authenticate with Google Drive. 
+    - In CI/CD environments (e.g., GitHub Actions), uses env variables with a refresh token.
+    - In local environments, falls back to browser-based login using credentials.json.
     """
     try:
-        creds = Credentials.from_authorized_user_info({
-            "client_id": os.environ["GOOGLE_CLIENT_ID"],
-            "client_secret": os.environ["GOOGLE_CLIENT_SECRET"],
-            "refresh_token": os.environ["GOOGLE_REFRESH_TOKEN"],
-            "token_uri": "https://oauth2.googleapis.com/token"
-        })
-
-        if not creds.valid:
-            creds.refresh(Request())
+        # Check if all 3 secrets are present → assume non-interactive mode
+        if all(env in os.environ for env in ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "GOOGLE_REFRESH_TOKEN"]):
+            logging.info("Using non-interactive credentials from environment variables.")
+            creds = Credentials.from_authorized_user_info({
+                "client_id": os.environ["GOOGLE_CLIENT_ID"],
+                "client_secret": os.environ["GOOGLE_CLIENT_SECRET"],
+                "refresh_token": os.environ["GOOGLE_REFRESH_TOKEN"],
+                "token_uri": "https://oauth2.googleapis.com/token"
+            })
+            if not creds.valid:
+                creds.refresh(Request())
+        else:
+            # Fallback: Local development with token.json and credentials.json
+            logging.info("Using local OAuth2 credentials with token.json.")
+            creds = None
+            if os.path.exists('token.json'):
+                creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+            if not creds or not creds.valid:
+                if creds and creds.expired and creds.refresh_token:
+                    creds.refresh(Request())
+                else:
+                    flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+                    creds = flow.run_local_server(port=0)
+                with open('token.json', 'w') as token_file:
+                    token_file.write(creds.to_json())
 
         logging.info("Authenticated with Google Drive.")
         return build('drive', 'v3', credentials=creds)
@@ -62,7 +76,7 @@ def authenticate_google_drive():
     except Exception as e:
         logging.error("Google Drive authentication failed: %s", e)
         raise
-
+    
 # UPLOAD FUNCTION
 
 def upload_to_drive(service, file_name, file_stream, mime_type):
