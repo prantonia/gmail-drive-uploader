@@ -1,6 +1,7 @@
 ---
 
-# Gmail to Google Drive Uploader
+## Gmail to Google Drive Uploader
+
 This project automates the process of downloading email attachments from a Gmail inbox and uploading them to a specified Google Drive folder — all done securely and hands-free.
 
 It is especially useful for recurring daily or hourly reports, transaction logs, or any automated system that sends files via email.
@@ -149,13 +150,14 @@ GDRIVE_FOLDER_ID=your_google_drive_folder_id
 
 * Right-click on the destination folder in Drive → "Get Link"
 * Copy the string after `/folders/` in the URL.
+    Like this: https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxxxx
 
 ---
 
 ### 8. Run the Script
 
 ```bash
-python main.py
+python gmail_to_drive.py
 ```
 
 On first run:

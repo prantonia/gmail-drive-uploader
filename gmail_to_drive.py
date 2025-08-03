@@ -12,7 +12,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from mimetypes import guess_type
 
-# ====== CONFIGURATION ======
+# CONFIGURATION
 load_dotenv()
 
 EMAIL_USER = os.getenv("EMAIL_USER")
@@ -20,9 +20,13 @@ EMAIL_PASS = os.getenv("EMAIL_PASS")
 SENDER_FILTER = os.getenv("SENDER_FILTER")
 GDRIVE_FOLDER_ID = os.getenv("GDRIVE_FOLDER_ID")
 
-SCOPES = ['https://www.googleapis.com/auth/drive.file']
+SCOPES = [
+    'https://www.googleapis.com/auth/gmail.readonly',
+    'https://www.googleapis.com/auth/drive.file'
+]
 
-# ====== LOGGING SETUP ======
+
+# LOGGING SETUP
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -35,7 +39,7 @@ logging.basicConfig(
 # Suppress noisy discovery_cache warning
 logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
 
-# ====== GOOGLE AUTH ======
+# GOOGLE AUTHENTICATION
 def authenticate_google_drive():
     """
     Authenticate with Google Drive using refreshable OAuth2 credentials 
@@ -59,7 +63,7 @@ def authenticate_google_drive():
         logging.error("Google Drive authentication failed: %s", e)
         raise
 
-# ====== UPLOAD FUNCTION ======
+# UPLOAD FUNCTION
 
 def upload_to_drive(service, file_name, file_stream, mime_type):
     """
@@ -92,7 +96,7 @@ def upload_to_drive(service, file_name, file_stream, mime_type):
 
 
 
-# ====== DOWNLOAD & UPLOAD ======
+# DOWNLOAD & UPLOAD
 def download_email_attachments():
     """
     Connects to Gmail via IMAP, filters unread emails from a sender,
@@ -150,6 +154,6 @@ def download_email_attachments():
     except Exception as e:
         logging.error("General error: %s", e)
 
-# ========== ENTRY POINT ==========
+# ENTRY POINT
 if __name__ == '__main__':
     download_email_attachments()
